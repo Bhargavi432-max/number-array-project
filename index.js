@@ -8,11 +8,6 @@ function findOddNumbers(arr) {
     return arr.filter(num => num % 2 !== 0);
 }
 
-// Sample array of numbers
-const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-console.log("Even Numbers:", findEvenNumbers(numbers));
-console.log("Odd Numbers:", findOddNumbers(numbers));
 // Function to print a simple pattern
 function printPattern(n) {
     let result = '';
@@ -22,5 +17,10 @@ function printPattern(n) {
     console.log(result);
 }
 
-// Print a pattern of 5 rows
-printPattern(5);
+// Sample array of numbers
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+// Call the functions
+console.log("Even Numbers:", findEvenNumbers(numbers));
+console.log("Odd Numbers:", findOddNumbers(numbers));
+printPattern(5);  // Print a pattern of 5 rows
