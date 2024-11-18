@@ -9,7 +9,13 @@ function findOddNumbers(arr) {
 }
 
 // Function to print a simple pattern
-
+function printPattern(n) {
+    let result = '';
+    for (let i = 1; i <= n; i++) {
+        result += '* '.repeat(i) + '\n';
+    }
+    console.log(result);
+}
 
 // Sample array of numbers
 const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
