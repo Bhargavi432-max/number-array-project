@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Search App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+        }
+        input, select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .movie-list {
+            list-style: none;
+            padding: 0;
+        }
+        .movie-list li {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .movie-list li:hover {
+            background: #e0e0e0;
+        }
+        .movie-details {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .back-btn {
+            display: none;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Movie Search</h1>
+        <input type="text" id="search" placeholder="Search for movies...">
+        <select id="sort">
+            <option value="asc">Sort by Year (Ascending)</option>
+            <option value="desc">Sort by Year (Descending)</option>
+        </select>
+        <select id="filter">
+            <option value="">Filter by Genre</option>
+            <option value="Action">Action</option>
+            <option value="Comedy">Comedy</option>
+            <option value="Drama">Drama</option>
+        </select>
+        <ul id="movies" class="movie-list"></ul>
+        <div id="details" class="movie-details"></div>
+        <button id="back" class="back-btn">Back to List</button>
+    </div>
+    <script>
+        const apiKey = 'dff50723';
+        const searchInput = document.getElementById('search');
+        const sortSelect = document.getElementById('sort');
+        const filterSelect = document.getElementById('filter');
+        const movieList = document.getElementById('movies');
+        const detailsDiv = document.getElementById('details');
+        const backButton = document.getElementById('back');
+
+        searchInput.addEventListener('input', fetchMovies);
+        sortSelect.addEventListener('change', fetchMovies);
+        filterSelect.addEventListener('change', fetchMovies);
+
+        function fetchMovies() {
+            const searchTerm = searchInput.value;
+            if (!searchTerm) return;
+
+            fetch(`http://www.omdbapi.com/?apikey=${apiKey}&s=${searchTerm}`)
+                .then(response => response.json())
+                .then(data => {
+                    let movies = data.Search || [];
+                    const sortOrder = sortSelect.value;
+                    movies.sort((a, b) => sortOrder === 'asc' ? a.Year - b.Year : b.Year - a.Year);
+
+                    const genreFilter = filterSelect.value;
+                    if (genreFilter) {
+                        movies = movies.filter(movie => movie.Genre.includes(genreFilter));
+                    }
+
+                    movieList.innerHTML = movies.map(movie => `
+                        <li onclick="fetchMovieDetails('${movie.imdbID}')">
+                            ${movie.Title} (${movie.Year})
+                        </li>
+                    `).join('');
+                });
+        }
+
+        function fetchMovieDetails(id) {
+            fetch(`http://www.omdbapi.com/?apikey=${apiKey}&i=${id}`)
+                .then(response => response.json())
+                .then(movie => {
+                    detailsDiv.innerHTML = `
+                        <h2>${movie.Title} (${movie.Year})</h2>
+                        <p><strong>Genre:</strong> ${movie.Genre}</p>
+                        <p><strong>Director:</strong> ${movie.Director}</p>
+                        <p><strong>Plot:</strong> ${movie.Plot}</p>
+                        <img src="${movie.Poster}" alt="${movie.Title}">
+                    `;
+                    detailsDiv.style.display = 'block';
+                    movieList.style.display = 'none';
+                    backButton.style.display = 'block';
+                });
+        }
+    </script>
+</body>
+</html>
